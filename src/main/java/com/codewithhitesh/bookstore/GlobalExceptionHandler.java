@@ -1,0 +1,30 @@
+package com.codewithhitesh.bookstore;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    // USER NOT FOUND
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // BOOK NOT FOUND
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<String> handleBookNotFound(BookNotFoundException ex) {
+
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // GENERIC EXCEPTION
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(
+                "Something went wrong : " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
