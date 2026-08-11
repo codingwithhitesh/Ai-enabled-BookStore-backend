@@ -81,10 +81,11 @@ public class UserBookService {
 
     // Method to be used by AI LLM for Stock Enquiry
     public String checkBookStock(String bookName){
-        Book book = bookRepository.findByBookNameIgnoreCase(bookName);
-        if (book == null) {
+        List <Book> books = bookRepository.findByBookNameContainingIgnoreCase(bookName);
+        if (books == null) {
             return "Sorry, the book '" + bookName + "' was not found.";
         }
+        Book book = books.get(0); // Extracts the first Book object from the list
         return "Book: " + book.getBookName()
                 + ", Available Stock: "
                 + book.getStockQuantity();
@@ -94,10 +95,11 @@ public class UserBookService {
 
     // Method to be used by AI LLM for Price Enquiry
     public String checkBookPrice(String bookName) {
-        Book book = bookRepository.findByBookNameIgnoreCase(bookName);
-        if (book == null) {
+        List<Book> books = bookRepository.findByBookNameContainingIgnoreCase(bookName);
+        if (books == null) {
             return "Sorry, the book '" + bookName + "' was not found.";
         }
+        Book book = books.get(0); // Extracts the first Book object from the list
         return "Book: " + book.getBookName()
                 + "has a selling price of -  "
                 + book.getSellingPrice();

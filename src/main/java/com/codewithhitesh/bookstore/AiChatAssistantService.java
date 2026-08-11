@@ -60,6 +60,9 @@ public class AiChatAssistantService {
 
                         Use customer information while answering.
                         Keep answers short.
+                        CRITICAL: Whenever a customer asks about book availability, titles, or prices,\s
+                        you MUST call the searchBooks tool to check the store database before responding.\s
+                        Do not answer from memory.
                         """
                         .formatted(
                                 user.getUserName(),
