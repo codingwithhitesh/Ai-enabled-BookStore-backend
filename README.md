@@ -1,306 +1,91 @@
-# 📚 AI-Powered Online Bookstore (Spring Boot + Spring AI + Ollama)
+🚀 **AI-Powered Bookstore Backend with Customer Chat, Memory & Tool Calling**
 
-An intelligent Online Bookstore backend built using **Spring Boot** and **Spring AI**. Besides traditional REST APIs for managing users, books, carts, and orders, this project demonstrates how a Large Language Model (LLM) can interact with real application data using **AI Tools (Function Calling)** and **Conversation Memory**.
+Excited to share an upgrade to my Spring Boot Online Bookstore project!
 
-This project was created as a learning project to understand how modern AI can be integrated into enterprise Java applications without sending the entire database to the model.
+What started as a traditional e-commerce backend gradually became an experiment in combining **Spring Boot + Spring AI + Ollama**.
 
----
+The idea I wanted to explore was:
 
-# ✨ Features
+**How can an AI assistant interact with the actual backend and database instead of simply generating text?**
 
-## Core Bookstore
+### 🏗️ Core Backend
 
-* User Management
-* Book Management
-* Shopping Cart
-* Order Placement
-* H2 In-Memory Database
-* Spring Data JPA
-* Global Exception Handling
-* REST APIs
+Built with:
 
----
+🔹 Java & Spring Boot
+🔹 Spring Data JPA / Hibernate
+🔹 H2 Database
+🔹 REST APIs
+🔹 User & Book management
+🔹 Cart & Order processing
+🔹 Pagination & Global Exception Handling
 
-## AI Features
+### 🤖 My main feature: TWO types of AI conversations
 
-### 🤖 General AI Assistant
+I implemented two different chat experiences.
 
-Users can ask normal AI questions.
+**1️⃣ General Bookstore Chat**
 
-Example:
+A customer can ask general questions such as:
 
-```
-What is Artificial Intelligence?
-```
+👉 “What are your working hours?”
+👉 “Where is the bookstore located?”
 
----
+This is a general AI assistant with access to bookstore-specific tools.
 
-### 👤 Personalized Customer Assistant
+**2️⃣ Customer-Specific Chat**
 
-The AI understands the current customer by reading information from the application's database.
+This is where I wanted to make the project more interesting.
 
-Example:
+A customer can chat using their **customer ID**, and the AI receives information about that specific customer from the backend, including:
 
-```
-Can I afford a laptop costing ₹45,000?
-```
+👤 Name
+📊 Customer status
+🛒 Total orders
 
-Instead of answering generically, the assistant can use the customer's stored information to produce a personalized response.
+The conversation also maintains **memory using Spring AI's MessageWindowChatMemory**, allowing multi-turn conversations to continue with context.
 
----
+So the architecture becomes:
 
-### 🧠 Conversation Memory
+**Customer → Spring Boot → AI → Customer Context + Conversation Memory → Response**
 
-This project uses
+### 🔧 AI Tool Calling
 
-```
-MessageWindowChatMemory
-```
+I also implemented backend tools using Spring AI's `@Tool`.
 
-to remember previous conversations.
+For example, if a customer asks:
 
-Example:
+> “Is Java Complete Reference available?”
 
-User:
+The AI can decide that it needs real information and call:
 
-```
-My favourite category is Science.
-```
+**AI → BookTool → UserBookService → Database → Result → AI → Customer**
 
-Later...
+I currently have tools for:
 
-```
-Recommend me another book.
-```
+📚 Checking book availability
+💰 Checking book price
 
-The assistant remembers earlier conversation without the user repeating everything.
+This was one of the biggest learning points for me:
 
----
+**The AI isn't guessing the database information — it can use backend functionality to retrieve it.**
 
-### 🔧 AI Tool Calling (Function Calling)
+### 🧠 What I learned
 
-One of the most interesting features of this project.
+Through this project I got hands-on experience with:
 
-Instead of giving the LLM direct database access, selected Java methods are exposed as **AI Tools**.
+• Spring AI
+• ChatClient & ChatModel
+• Ollama / local LLMs
+• Conversation memory
+• AI Tool Calling
+• Connecting LLMs with existing Java services
+• Building AI features on top of a REST backend
 
-Current implemented tool:
+This project is still evolving. Next, I want to explore **RAG, authentication, testing, DTOs and deployment**.
 
-* Check Book Stock
+For me, this project represents a shift from simply learning Spring Boot to understanding how **AI capabilities can be integrated into a real backend application.**
 
-Example prompt:
+🔗 **GitHub:** https://github.com/codingwithhitesh/Ai-enabled-BookStore-backend
 
-```
-Is "Atomic Habits" available?
-```
-
-The LLM automatically decides that it needs inventory information, invokes the Java tool, receives the result, and then generates a natural-language response.
-
-This keeps database access secure while allowing the AI to retrieve real-time information.
-
----
-
-# 🏗 Project Architecture
-
-```
-                User
-                  │
-                  ▼
-          REST Controller
-                  │
-                  ▼
-      AiChatAssistantService
-                  │
-       ┌──────────┴──────────┐
-       │                     │
-       ▼                     ▼
- Spring AI ChatClient     AI Tool
-       │              (BookTool.java)
-       │                     │
-       ▼                     ▼
-    Ollama LLM         Book Repository
-       │                     │
-       └──────────┬──────────┘
-                  ▼
-            Final AI Response
-```
-
----
-
-# 🛠 Technologies Used
-
-* Java
-* Spring Boot
-* Spring AI
-* Spring Data JPA
-* Ollama
-* H2 Database
-* Maven
-
----
-
-# 📂 Project Structure
-
-```
-bookstore
-│
-├── AiChatController.java
-├── AiChatAssistantService.java
-├── Book.java
-├── User.java
-├── Cart.java
-├── Order.java
-├── BookTool.java
-├── UserBookService.java
-├── Repository Classes
-├── GlobalExceptionHandler.java
-└── BookstoreApplication.java
-```
-
----
-
-# 🚀 Running the Project
-
-## 1. Clone the repository
-
-```
-git clone <repository-url>
-```
-
----
-
-## 2. Start Ollama
-
-Run your Ollama server.
-
-Example model:
-
-```
-llama3.2
-```
-
----
-
-## 3. Start Spring Boot
-
-Run
-
-```
-BookstoreApplication.java
-```
-
----
-
-## 4. Open H2 Database
-
-```
-http://localhost:8080/h2-console
-```
-
-Database URL
-
-```
-jdbc:h2:mem:bookstore
-```
-
----
-
-# Example REST Endpoints
-
-## Add User
-
-```
-POST
-/api/H2/OnlineBookStore/India/addUser
-```
-
----
-
-## AI General Chat
-
-```
-GET
-
-/Jaipur-BookStore-online/ai/GeneralChat?msg=Hello
-```
-
----
-
-## Customer AI Chat
-
-```
-GET
-
-/Jaipur-BookStore-online/ai/customer/1/askAi?msg=Can I buy a laptop?
-```
-
----
-
-# Example AI Tool Flow
-
-```
-User:
-Is Atomic Habits available?
-
-↓
-
-LLM decides it needs inventory information
-
-↓
-
-Calls BookTool.checkBookStock()
-
-↓
-
-BookRepository queries H2 Database
-
-↓
-
-BookTool returns stock information
-
-↓
-
-LLM generates a human-friendly answer
-```
-
----
-
-# Learning Objectives
-
-This project demonstrates:
-
-* Spring Boot REST API development
-* Layered Architecture
-* Spring Data JPA
-* AI integration using Spring AI
-* ChatClient
-* Conversation Memory
-* Function Calling (AI Tools)
-* Connecting AI with enterprise applications
-* H2 database integration
-
----
-
-# Future Improvements
-
-* JWT Authentication
-* Role-Based Authorization
-* DTO Layer
-* MySQL/PostgreSQL support
-* Docker
-* RAG (Retrieval-Augmented Generation)
-* Vector Database Integration
-* Streaming AI Responses
-* React or Angular Frontend
-* Chat History Persistence
-* Unit Testing
-* Integration Testing
-
----
-
-# Author
-
-**Hitesh S**
-
-Backend Developer | Java | Spring Boot | Spring AI
-
-This project was built to explore how enterprise Java applications can integrate Large Language Models using Spring AI while following clean architecture principles.
+#Java #SpringBoot #SpringAI #GenerativeAI #AI #BackendDevelopment #Ollama #LLM #ToolCalling #SpringDataJPA #Hibernate #RESTAPI #LearningInPublic
