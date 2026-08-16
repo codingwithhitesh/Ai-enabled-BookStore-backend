@@ -8,10 +8,8 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Non-root user setup
-RUN useradd -m -u 1000 user
-USER user
+# Copy built jar file directly
+COPY --from=build /app/target/*.jar app.jar
 
-COPY --from=build --chown=user /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
