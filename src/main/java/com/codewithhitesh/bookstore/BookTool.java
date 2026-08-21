@@ -14,14 +14,14 @@ public class BookTool {
     }
 
 
-    // Stock calculator
+    // Stock calculator Tool
     @Tool(description = "Checks the stock quantity of a book using its name")
     public String getBookAvailability(String bookName) {
 
         return userBookService.checkBookStock(bookName);
     }
 
-    // Price calculator
+    // Price calculator Tool
     @Tool(description = "Checks the selling price of a book using its name")
     public String getBookPrice(String bookName) {
 
