@@ -5,7 +5,7 @@ package com.codewithhitesh.bookstore;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
@@ -14,20 +14,21 @@ public class AiChatAssistantService {
 
     private final ChatClient chatClient;
     private final UserRepository userRepository;
-    private  final BookTool bookTool;
+    private final BookTool bookTool;
 
     public AiChatAssistantService(ChatModel chatModel,
-                                  UserRepository userRepository, BookTool bookTool) {
+                                  UserRepository userRepository,
+                                  BookTool bookTool) {
 
         this.userRepository = userRepository;
         this.bookTool = bookTool;
 
-        ChatMemory memory = MessageWindowChatMemory.builder()
-                .maxMessages(20)
-                .build();
+        // 1. Instantiation for 1.0.0-M6
+        ChatMemory chatMemory = new InMemoryChatMemory();
 
+        // 2. Pass 'chatMemory' to the builder
         this.chatClient = ChatClient.builder(chatModel)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
     }
 
@@ -40,28 +41,22 @@ public class AiChatAssistantService {
         }
 
         return chatClient.prompt()
-
                 .system("""
                         You are a polite customer support bot for Jaipur Book Store.
 
                         Store Information
-
                         Location : Chaura Rasta Jaipur
-
                         CEO : Shruti Rathore
 
                         Customer Information
-
                         Name : %s
-
                         Status : %s
-
                         Total Orders : %d
 
                         Use customer information while answering.
                         Keep answers short.
-                        CRITICAL: Whenever a customer asks about book availability, titles, or prices,\s
-                        you MUST call the searchBooks tool to check the store database before responding.\s
+                        CRITICAL: Whenever a customer asks about book availability, titles, or prices,
+                        you MUST call the searchBooks tool to check the store database before responding.
                         Do not answer from memory.
                         """
                         .formatted(
@@ -71,25 +66,20 @@ public class AiChatAssistantService {
                         ))
                 .tools(bookTool)    // Tool Calling
                 .user(userMessage)
-
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID,
-                String.valueOf(userId)))
+                // 3. Use correct Spring AI 1.0.0-M6 key constant
+                .advisors(a -> a.param(MessageChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, String.valueOf(userId)))
                 .call()
                 .content();
-
     }
 
     public String askGeneralAssistant(String message) {
 
         return chatClient.prompt()
-
                 .system("""
                         You are Jaipur Book Store assistant.
 
                         Working Hours
-
                         Monday-Friday
-
                         9AM-4PM
 
                         If question is outside bookstore,
@@ -97,13 +87,9 @@ public class AiChatAssistantService {
                         """)
                 .tools(bookTool)
                 .user(message)
-
                 .call()
-
                 .content();
-
     }
-
 }
 
 
