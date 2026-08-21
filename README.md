@@ -1,91 +1,94 @@
-🚀 **AI-Powered Bookstore Backend with Customer Chat, Memory & Tool Calling**
+🚀 AI-Powered Bookstore Backend with Customer Chat, Memory, Tool Calling & RAG
+Excited to share a major upgrade to my Spring Boot Online Bookstore project!
+What started as a traditional e-commerce backend gradually evolved into an experiment combining Spring Boot, Spring AI, and Ollama.
 
-Excited to share an upgrade to my Spring Boot Online Bookstore project!
+The core idea I wanted to explore was:
+How can an AI assistant interact directly with the backend database AND retrieve information from unstructured policy documents instead of hallucinating answers?
 
-What started as a traditional e-commerce backend gradually became an experiment in combining **Spring Boot + Spring AI + Ollama**.
-
-The idea I wanted to explore was:
-
-**How can an AI assistant interact with the actual backend and database instead of simply generating text?**
-
-### 🏗️ Core Backend
-
+🏗️ Core Backend
 Built with:
 
-🔹 Java & Spring Boot
-🔹 Spring Data JPA / Hibernate
-🔹 H2 Database
-🔹 REST APIs
-🔹 User & Book management
-🔹 Cart & Order processing
-🔹 Pagination & Global Exception Handling
+Java 21 & Spring Boot
 
-### 🤖 My main feature: TWO types of AI conversations
+Spring Data JPA / Hibernate
 
-I implemented two different chat experiences.
+H2 In-Memory Database
 
-**1️⃣ General Bookstore Chat**
+REST APIs (User/Book management, Cart & Order processing)
 
-A customer can ask general questions such as:
+Pagination & Sorting (Pageable)
 
-👉 “What are your working hours?”
-👉 “Where is the bookstore located?”
+Global Exception Handling
 
-This is a general AI assistant with access to bookstore-specific tools.
+🤖 Main Feature: Multi-Faceted AI Chat System
+I implemented targeted chat experiences powered by Spring AI and local LLMs:
 
-**2️⃣ Customer-Specific Chat**
-
-This is where I wanted to make the project more interesting.
-
-A customer can chat using their **customer ID**, and the AI receives information about that specific customer from the backend, including:
+1️⃣ Customer-Specific Chat (With Memory & Context)
+A customer can chat using their customer ID. The AI automatically receives real-time context about that specific user:
 
 👤 Name
+
 📊 Customer status
-🛒 Total orders
 
-The conversation also maintains **memory using Spring AI's MessageWindowChatMemory**, allowing multi-turn conversations to continue with context.
+🛒 Total order count
 
-So the architecture becomes:
+Conversation history is maintained using MessageChatMemoryAdvisor (with InMemoryChatMemory), enabling context-aware, multi-turn dialogs.
 
-**Customer → Spring Boot → AI → Customer Context + Conversation Memory → Response**
 
-### 🔧 AI Tool Calling
+Customer → Spring Boot → ChatClient + Conversation Memory → Backend Context → Response
+2️⃣ General Bookstore Assistant
+A general customer support assistant designed to handle public store inquiries (working hours, location, policies) with strict guardrails to decline off-topic queries.
 
-I also implemented backend tools using Spring AI's `@Tool`.
+🔧 AI Tool Calling / Function Calling
+To prevent the LLM from guessing database details, I implemented backend tools using Spring AI's @Tool annotation.
 
-For example, if a customer asks:
+For example, when a user asks:
 
-> “Is Java Complete Reference available?”
+"Is 'Effective Java' available in stock and what does it cost?"
 
-The AI can decide that it needs real information and call:
+The AI dynamically invokes backend functions to query live data:
 
-**AI → BookTool → UserBookService → Database → Result → AI → Customer**
 
-I currently have tools for:
+AI Model → BookTool → UserBookService → H2 Database → Spring AI → Customer Response
+Currently Active Tools:
 
-📚 Checking book availability
-💰 Checking book price
+📚 getBookAvailability: Dynamically checks live database stock by book title.
 
-This was one of the biggest learning points for me:
+💰 getBookPrice: Queries current selling prices directly from the store inventory.
 
-**The AI isn't guessing the database information — it can use backend functionality to retrieve it.**
+📄 RAG (Retrieval-Augmented Generation) & Document Ingestion
+Today (21 August 2026), I upgraded the AI pipeline by implementing RAG using Spring AI and local embeddings.
 
-### 🧠 What I learned
+Instead of hardcoding store rules or relying on generic model training:
 
-Through this project I got hands-on experience with:
+Document Ingestion: PDF files (FAQ.pdf, Issue policy.pdf, Return policy.pdf) are loaded into the application context at startup.
 
-• Spring AI
-• ChatClient & ChatModel
-• Ollama / local LLMs
-• Conversation memory
-• AI Tool Calling
-• Connecting LLMs with existing Java services
-• Building AI features on top of a REST backend
+Vector Embeddings: Ingested documents are chunked and converted into vector embeddings using nomic-embed-text via Ollama.
 
-This project is still evolving. Next, I want to explore **RAG, authentication, testing, DTOs and deployment**.
+Similarity Search: The vectors are stored in a local SimpleVectorStore. When users ask policy questions (e.g., return windows or book issuing rules), Spring AI performs a vector similarity search to retrieve relevant text chunks and grounds the AI's response in exact store policy.
 
-For me, this project represents a shift from simply learning Spring Boot to understanding how **AI capabilities can be integrated into a real backend application.**
+🧠 What I Learned
+Handled Spring AI integrations (ChatClient, ChatModel, VectorStore, EmbeddingModel).
 
-🔗 **GitHub:** https://github.com/codingwithhitesh/Ai-enabled-BookStore-backend
+Executed local LLM operations and embedding generation with Ollama (llama3.1, nomic-embed-text).
 
-#Java #SpringBoot #SpringAI #GenerativeAI #AI #BackendDevelopment #Ollama #LLM #ToolCalling #SpringDataJPA #Hibernate #RESTAPI #LearningInPublic
+Configured conversation memory via MessageChatMemoryAdvisor.
+
+Integrated dynamic backend Tool Calling (@Tool) with Spring services.
+
+Implemented RAG (Retrieval-Augmented Generation) over local PDF documents.
+
+Built production-ready REST controllers with Pagination and Sorting.
+
+🔮 What's Next?
+🔐 Security & JWT Authentication
+
+🧪 Integration testing for Vector Store & RAG pipelines
+
+📦 DTO mappings using MapStruct
+
+🐳 Dockerization & Cloud Deployment
+
+🔗 GitHub Repository: https://github.com/codingwithhitesh/Ai-enabled-BookStore-backend
+
+#Java #SpringBoot #SpringAI #GenerativeAI #RAG #AI #BackendDevelopment #Ollama #VectorDatabase #LLM #ToolCalling #SpringDataJPA #Hibernate #RESTAPI #LearningInPublic
