@@ -33,9 +33,11 @@ A customer can chat using their customer ID. The AI automatically receives real-
 🛒 Total order count
 
 Conversation history is maintained using MessageChatMemoryAdvisor (with InMemoryChatMemory), enabling context-aware, multi-turn dialogs.
-
-
 Customer → Spring Boot → ChatClient + Conversation Memory → Backend Context → Response
+
+
+
+
 2️⃣ General Bookstore Assistant
 A general customer support assistant designed to handle public store inquiries (working hours, location, policies) with strict guardrails to decline off-topic queries.
 
