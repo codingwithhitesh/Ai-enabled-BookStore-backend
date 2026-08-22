@@ -16,12 +16,27 @@ public class VectorStoreConfig {
 
     @Bean
     public SimpleVectorStore vectorStore(EmbeddingModel embeddingModel) {
-        SimpleVectorStore vectorStore = SimpleVectorStore.builder(embeddingModel).build();
+
+        // Create the vector store
+        SimpleVectorStore vectorStore =
+                SimpleVectorStore.builder(embeddingModel).build();
+
+        // Location where embeddings will be saved
         File file = new File(vectorStorePath);
 
-        // Load existing embeddings if the JSON file exists
+        // If an existing vector store is present,
+        // load it instead of starting from zero.
         if (file.exists()) {
+
+            System.out.println("Loading existing vector store from: "
+                    + file.getAbsolutePath());
+
             vectorStore.load(file);
+
+        } else {
+
+            System.out.println("No existing vector store found.");
+
         }
 
         return vectorStore;
