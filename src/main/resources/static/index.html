@@ -1,144 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jaipur Book Store AI</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jaipur Book Store Spring Boot frontend">
+  <title>Jaipur Book Store</title>
+  <link rel="stylesheet" href="styles.css?v=final1">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <p class="eyebrow">SPRING BOOT + SPRING AI</p>
-      <h1>Jaipur Book Store</h1>
-      <p class="subtitle">Backend portfolio demo with e-commerce APIs, AI chat, memory, tool calling and RAG.</p>
+<header class="topbar">
+  <div class="brand"><div class="logo">JB</div><div><div class="eyebrow">JAIPUR BOOK STORE</div><strong>Spring Boot Learning Project</strong></div></div>
+  <div class="server"><span id="apiStatus" class="status">● Checking backend…</span><small id="apiDetail">Checking API…</small></div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div><span class="eyebrow">BOOKSTORE CONTROL ROOM</span><h1>Your bookstore,<br><em>connected to H2.</em></h1><p>Manage books and users, test cart APIs, place orders, and try the Spring AI assistant from one simple frontend.</p></div>
+    <div class="hero-note"><b>Backend URL</b><code>/Jaipur-BookStore-online/ai</code><span>All buttons below use the same working controller path.</span></div>
+  </section>
+
+  <section class="stats"><div><span>BOOKS</span><b id="bookCount">—</b></div><div><span>USERS</span><b id="userCount">—</b></div><div><span>DATABASE</span><b>H2</b></div><div><span>API</span><b>REST</b></div></section>
+
+  <section class="section-title"><div><span class="eyebrow">DATABASE</span><h2>Current Books</h2></div><button id="refreshBooks" class="button secondary">↻ Refresh</button></section>
+  <div id="books" class="book-grid"><div class="loading">Loading books…</div></div>
+
+  <section class="two-col">
+    <div class="panel">
+      <div class="panel-head"><div><span class="eyebrow">POST /addBook</span><h2>Add Book</h2></div></div>
+      <form id="addBookForm">
+        <div class="form-grid"><label>Book name<input id="bookName" required minlength="3" maxlength="50" placeholder="Clean Code"></label><label>Writer<input id="writerName" required minlength="3" maxlength="20" placeholder="Robert Martin"></label><label>Price<input id="sellingPrice" required type="number" min="0" step="1" placeholder="499"></label><label>Stock<input id="stockQuantity" required type="number" min="0" step="1" placeholder="10"></label><label>Category<select id="category"><option>Science</option><option>Finance</option><option>Arts</option><option>Kids</option><option>Novel</option></select></label></div>
+        <button id="addBookBtn" class="button primary" type="submit">Add Book to H2</button><div id="bookFormResult" class="result">Ready.</div>
+      </form>
     </div>
-    <span class="status" id="apiStatus">Checking API…</span>
-  </header>
 
-  <main class="container">
-    <section class="hero-grid">
-      <article class="card feature">
-        <span>01</span>
-        <h3>REST Backend</h3>
-        <p>Books, users, cart and order workflows powered by Spring Boot and JPA.</p>
-      </article>
-      <article class="card feature">
-        <span>02</span>
-        <h3>AI Tool Calling</h3>
-        <p>The assistant can query live book stock and pricing from the database.</p>
-      </article>
-      <article class="card feature">
-        <span>03</span>
-        <h3>RAG</h3>
-        <p>Store policy questions are answered from embedded PDF documents.</p>
-      </article>
-      <article class="card feature">
-        <span>04</span>
-        <h3>Chat Memory</h3>
-        <p>Customer conversations maintain memory using a per-user conversation ID.</p>
-      </article>
-    </section>
+    <div class="panel">
+      <div class="panel-head"><div><span class="eyebrow">POST /addUser</span><h2>Add User</h2></div></div>
+      <form id="addUserForm">
+        <div class="form-grid one"><label>User name<input id="userName" required minlength="3" maxlength="20" placeholder="Hitesh"></label><label>Gender<select id="gender"><option>MALE</option><option>FEMALE</option><option>NOT_SPECIFIED</option></select></label><label>Status<select id="userStatus"><option>STUDENT</option><option>PROFESSIONAL</option><option>HOMEMAKER</option></select></label></div>
+        <button id="addUserBtn" class="button primary" type="submit">Add User to H2</button><div id="userFormResult" class="result">Ready.</div>
+      </form>
+    </div>
+  </section>
 
-    <section class="section-head">
-      <div>
-        <p class="eyebrow">LIVE DATA</p>
-        <h2>Book Catalog</h2>
-      </div>
-      <button class="secondary" onclick="loadBooks()">Refresh</button>
-    </section>
-    <div id="books" class="book-grid"></div>
+  <section class="section-title"><div><span class="eyebrow">DATABASE</span><h2>Current Users</h2></div><button id="refreshUsers" class="button secondary">↻ Refresh</button></section>
+  <div id="users" class="panel user-list"><div class="loading">Loading users…</div></div>
 
-    <section class="two-col">
-      <article class="panel">
-        <div class="section-head compact">
-          <div><p class="eyebrow">CUSTOMERS</p><h2>User Directory</h2></div>
-          <button class="secondary" onclick="loadUsers()">Refresh</button>
-        </div>
-        <div id="users" class="user-list"></div>
-      </article>
+  <section class="two-col">
+    <div class="panel">
+      <div class="panel-head"><div><span class="eyebrow">USER MANAGEMENT</span><h2>Update User</h2></div></div>
+      <form id="updateUserForm"><label>Select user<select id="updateUserId"></select></label><div class="form-grid"><label>Name<input id="updateUserName" minlength="3" maxlength="20" placeholder="Select a user"></label><label>Gender<select id="updateGender"><option>MALE</option><option>FEMALE</option><option>NOT_SPECIFIED</option></select></label><label>Status<select id="updateStatus"><option>STUDENT</option><option>PROFESSIONAL</option><option>HOMEMAKER</option></select></label></div><button class="button primary" type="submit">Update User</button><div id="updateResult" class="result">Ready.</div></form>
+    </div>
+    <div class="panel danger-panel"><div class="panel-head"><div><span class="eyebrow">DELETE</span><h2>Delete User</h2></div></div><label>Select user<select id="deleteUserId"></select></label><button id="deleteUserBtn" class="button danger" type="button">Delete Selected User</button><div id="deleteResult" class="result">Ready.</div><p class="hint">Deleting a user may fail if your database has related records. That is a backend/database rule, not a frontend error.</p></div>
+  </section>
 
-      <article class="panel">
-        <p class="eyebrow">STORE OPERATIONS</p>
-        <h2>Add to Cart & Place Order</h2>
-        <div class="form-grid">
-          <label>User ID<input id="cartUserId" type="number" min="1" value="1"></label>
-          <label>Book ID<input id="cartBookId" type="number" min="1" value="1"></label>
-          <label>Quantity<input id="cartQty" type="number" min="1" value="1"></label>
-        </div>
-        <div class="button-row">
-          <button onclick="addToCart()">Add to cart</button>
-          <button class="secondary" onclick="viewCart()">View cart</button>
-        </div>
-        <div id="cartResult" class="result muted">Cart details will appear here.</div>
-        <button id="placeOrderBtn" class="wide" onclick="placeOrder()" disabled>Place current order</button>
-      </article>
-    </section>
+  <section class="section-title"><div><span class="eyebrow">CART & ORDERS</span><h2>REST API Tester</h2></div></section>
+  <section class="two-col">
+    <div class="panel"><div class="panel-head"><div><span class="eyebrow">POST /manageCart/{bookId}/{userId}/{quantity}</span><h2>Add to Cart</h2></div></div><form id="cartForm"><label>Customer<select id="cartUserId"></select></label><label>Book<select id="cartBookId"></select></label><label>Quantity<input id="cartQuantity" type="number" min="1" step="1" value="1"></label><button class="button primary" type="submit">Add Item to Cart</button><div id="cartResult" class="result">Ready.</div></form></div>
+    <div class="panel"><div class="panel-head"><div><span class="eyebrow">POST /placeYourOrder/{cartId}</span><h2>Place Order</h2></div></div><form id="orderForm"><label>Cart ID<input id="cartId" type="number" min="1" placeholder="e.g. 1"></label><button class="button primary" type="submit">Place Order</button><div id="orderResult" class="result">Ready.</div></form><p class="hint">Your current backend returns only a text message from <code>/manageCart</code>; it does not return the cart ID. Enter the cart ID from your H2 data if you want to test order placement.</p></div>
+  </section>
 
-    <section class="two-col">
-      <article class="panel">
-        <p class="eyebrow">ADMIN DEMO</p>
-        <h2>Add a Book</h2>
-        <div class="form-grid one">
-          <label>Book name<input id="bookName" placeholder="Clean Code"></label>
-          <label>Writer<input id="writerName" placeholder="Robert Martin"></label>
-          <label>Price<input id="sellingPrice" type="number" placeholder="699"></label>
-          <label>Stock<input id="stockQuantity" type="number" placeholder="25"></label>
-          <label>Category
-            <select id="category"><option>Science</option><option>Finance</option><option>Arts</option><option>Kids</option><option>Novel</option></select>
-          </label>
-        </div>
-        <button class="wide" onclick="addBook()">Add book</button>
-        <div id="bookFormResult" class="result muted">API response will appear here.</div>
-      </article>
-
-      <article class="panel">
-        <p class="eyebrow">ADMIN DEMO</p>
-        <h2>Add a User</h2>
-        <div class="form-grid one">
-          <label>Name<input id="userName" placeholder="Aarav Sharma"></label>
-          <label>Gender<select id="gender"><option>MALE</option><option>FEMALE</option><option>NOT_SPECIFIED</option></select></label>
-          <label>Status<select id="userStatus"><option>STUDENT</option><option>PROFESSIONAL</option><option>HOMEMAKER</option></select></label>
-        </div>
-        <button class="wide" onclick="addUser()">Add user</button>
-        <div id="userFormResult" class="result muted">API response will appear here.</div>
-      </article>
-    </section>
-
-    <section class="section-head">
-      <div><p class="eyebrow">SPRING AI</p><h2>AI Assistant Demo</h2></div>
-    </section>
-    <section class="chat-layout">
-      <article class="panel chat-card">
-        <div class="tabs">
-          <button class="tab active" data-mode="general">General</button>
-          <button class="tab" data-mode="customer">Customer + Memory</button>
-          <button class="tab" data-mode="rag">RAG Policies</button>
-        </div>
-        <div id="customerIdWrap" class="hidden small-field">
-          <label>Customer ID<input id="chatCustomerId" type="number" min="1" value="1"></label>
-        </div>
-        <div id="chatMessages" class="messages">
-          <div class="bubble assistant">Ask about working hours, a book's price/stock, your customer account, or store policies.</div>
-        </div>
-        <div class="chat-input">
-          <input id="chatInput" placeholder="Try: What is the price of Atomic Habits?" />
-          <button onclick="sendChat()">Send</button>
-        </div>
-      </article>
-
-      <aside class="panel architecture">
-        <p class="eyebrow">HOW IT WORKS</p>
-        <h2>Architecture</h2>
-        <div class="flow"><span>Frontend</span><b>→</b><span>Spring Boot REST API</span><b>→</b><span>Service Layer</span></div>
-        <div class="flow"><span>AI Chat</span><b>→</b><span>Spring AI</span><b>→</b><span>Ollama / Llama</span></div>
-        <div class="flow"><span>Tool Calling</span><b>→</b><span>BookTool</span><b>→</b><span>H2 Database</span></div>
-        <div class="flow"><span>RAG</span><b>→</b><span>Embeddings</span><b>→</b><span>PDF Vector Store</span></div>
-      </aside>
-    </section>
-  </main>
-
-  <footer>Portfolio demo • Java 21 • Spring Boot • Spring Data JPA • Spring AI • Ollama • RAG</footer>
-  <script src="/app.js"></script>
+  <section class="section-title"><div><span class="eyebrow">SPRING AI</span><h2>AI Assistant</h2></div></section>
+  <section class="panel ai-panel">
+    <div class="tabs"><button class="tab active" data-mode="general">General AI</button><button class="tab" data-mode="customer">Customer + Memory</button><button class="tab" data-mode="rag">RAG / Policies</button></div>
+    <div id="customerIdWrap" class="small-field hidden"><label>Customer<select id="chatCustomerId"></select></label></div>
+    <div id="chatHelp" class="chat-help"></div>
+    <div id="ragNotice" class="notice hidden"><b>RAG note:</b> your Java project contains the RAG service and PDF documents, but it currently has no REST controller endpoint for the browser to call. This frontend therefore does not fake a RAG URL or produce a 404.</div>
+    <div id="chatMessages" class="messages"><div class="bubble assistant">Hello! Choose General AI or Customer + Memory and ask a question.</div></div>
+    <div class="chat-input"><input id="chatInput" placeholder="Type your question…" autocomplete="off"><button id="sendChatBtn" class="button primary" type="button">Send</button></div>
+  </section>
+</main>
+<footer>Jaipur Book Store · Spring Boot · H2 · REST · Spring AI</footer>
+<script src="app.js?v=final1"></script>
 </body>
 </html>
