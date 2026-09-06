@@ -34,7 +34,7 @@ public class VectorStoreConfig {
 
             @Override
             public float[] embed(Document document) {
-                return new float[0];
+                return new float[1536];
             }
         };
     }
