@@ -1,4 +1,4 @@
-const API = '/Jaipur-BookStore-online/ai';
+const API = '';
 let currentChatMode = 'general';
 let currentCartId = null;
 
